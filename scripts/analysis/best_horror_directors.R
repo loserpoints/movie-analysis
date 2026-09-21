@@ -7,7 +7,7 @@ library(scales)
 
 ### load the shared horror data set
 
-source("scripts/04_horror_base.R")
+source("scripts/03_horror_base.R")
 
 
 ### fetch and format data from local database

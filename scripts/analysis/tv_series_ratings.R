@@ -2,7 +2,6 @@
 
 library(RMariaDB)
 library(tidyverse)
-library(scales)
 library(LaCroixColoR)
 
 
