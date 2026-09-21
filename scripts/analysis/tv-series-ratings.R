@@ -85,4 +85,4 @@ ggplot(trek_tng, aes(episode, averageRating, color = interaction(seasonNumber, p
         legend.text = element_text(size = 12, family = "Trebuchet MS"))
 
 
-ggsave(filename = "C:/Users/Alan/Desktop/trek_tng.png", width = 21.333, height = 10.666)
+ggsave(filename = "viz/trek_tng.png", width = 21.333, height = 10.666)

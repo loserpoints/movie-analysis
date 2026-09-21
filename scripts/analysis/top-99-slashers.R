@@ -9,7 +9,7 @@ loadfonts(device = "win")
 
 ### load the shared horror data set
 
-source("scripts/Horror base.R")
+source("scripts/04-horror-base.R")
 
 
 ### fetch and format data from local database
@@ -111,4 +111,4 @@ ggplot(best_slashers, aes(-rank, y = 1, label = label)) +
         strip.background = element_blank(),
         strip.text = element_blank())
 
-ggsave(filename = "imdb_top_99_slasher.png", height = 10.666, width = 21.333)
+ggsave(filename = "viz/imdb_top_99_slasher.png", height = 10.666, width = 21.333)

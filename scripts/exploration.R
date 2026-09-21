@@ -1,3 +1,10 @@
+### scratch work, kept for reference rather than as finished analysis
+###
+### this is where several of the analyses in scripts/analysis were worked out,
+### so it contains earlier versions of the same objects and charts. it writes
+### its output to data/ rather than viz/ so running it cannot overwrite the
+### committed charts.
+
 library(tidyverse)
 library(ggthemes)
 library(extrafont)
@@ -107,7 +114,7 @@ ggplot(horror_best_stacked, aes(x= 1, value, fill = name)) +
         strip.text = element_text(angle = 180),
         legend.position = "right")
 
-ggsave(filename = "horror_best_by_year.png", width = 21.333, height = 10.666)  
+ggsave(filename = "data/horror_best_by_year.png", width = 21.333, height = 10.666)  
 
 
 
@@ -191,7 +198,7 @@ ggplot(best_ever, aes(-rank, y = 1, label = label)) +
         strip.background = element_blank(),
         strip.text = element_blank())
 
-ggsave(filename = "imdb_top_99_horror.png", height = 10.666, width = 21.333)
+ggsave(filename = "data/imdb_top_99_horror.png", height = 10.666, width = 21.333)
 
 
 

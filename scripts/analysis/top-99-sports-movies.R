@@ -178,6 +178,6 @@ ggplot(best_sports, aes(-rank, y = 1, label = label)) +
         strip.text = element_blank())
 
 
-ggsave(filename = "C:/Users/Alan/Desktop/top_99_sports_movies.png", width = 21.333, height = 10.666)
+ggsave(filename = "viz/top_99_sports_movies.png", width = 21.333, height = 10.666)
 
-write.csv(sports_adj, file = "C:/Users/Alan/Desktop/top_120_sports_movies.csv", row.names = F)
+write.csv(sports_adj, file = "data/top_120_sports_movies.csv", row.names = F)
