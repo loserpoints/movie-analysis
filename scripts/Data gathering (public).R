@@ -3,16 +3,6 @@
 library(tidyverse)
 
 
-### get imdb data
-
-imdb_data <- get_imdb_data()
-
-
-### get movie lens data
-
-ml_data <- get_ml_data()
-
-
 ### define function to download files from imdb site
 
 get_imdb_data <- function(x) {
@@ -87,3 +77,14 @@ get_ml_data <- function(x) {
   return(ml_data)
     
 }
+
+### get imdb data
+
+imdb_data <- get_imdb_data()
+
+
+### get movie lens data
+
+ml_data <- get_ml_data()
+
+
