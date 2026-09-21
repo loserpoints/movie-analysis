@@ -52,14 +52,14 @@ dbClearResult(horror_director_db)
 
 horror_director <-
   
-  left_join(horror_director, horror_adj %>% select(tconst, adj_score)) %>%
+  left_join(horror_director, horror_adj %>% select(tconst, adj_score))
 
 
-### aummarize director data to get summed ratings  
+### summarize director data to get summed ratings  
 
 horror_director_totals <- horror_director %>%  
   
-  select(primaryName, adj_score, n) %>%
+  select(primaryName, adj_score) %>%
   
   group_by(primaryName) %>%
   
@@ -109,7 +109,7 @@ top_horror_directors_plot_labels <- top_horror_directors_plot %>%
   filter(adj_score == max(adj_score))
 
 
-### create function fo foce integer breaks on plot
+### create function to force integer breaks on plot
 
 int_breaks <-
   function(x, n = 5)

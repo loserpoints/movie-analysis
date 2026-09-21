@@ -4,16 +4,6 @@ library(tidyverse)
 library(RMariaDB)
 
 
-### create imdb tables
-
-create_imdb_tables()
-
-
-### create movie lens tables
-
-create_ml_tables()
-
-
 ### define function to create imdb tables
 
 create_imdb_tables <- function(x) {
@@ -58,8 +48,6 @@ create_imdb_tables <- function(x) {
   
   results <- dbSendQuery(movies_db, create_table_imdb_basics)
   
-  dbRemoveTable(movies_db, "imdb_basics")
-  
   dbClearResult(results)
   
   
@@ -75,6 +63,21 @@ create_imdb_tables <- function(x) {
   dbClearResult(results)
   
   
+  ## create names table
+  
+  create_table_imdb_names <- "CREATE TABLE imdb_names (
+  nconst TEXT,
+  primaryName TEXT,
+  birthYear TEXT,
+  deathYear TEXT,
+  primaryProfession TEXT,
+  knownForTitles TEXT);"
+  
+  results <- dbSendQuery(movies_db, create_table_imdb_names)
+  
+  dbClearResult(results)
+  
+  
   ## create tv episode table
   
   create_table_imdb_episodes <- "CREATE TABLE imdb_episodes (
@@ -86,6 +89,8 @@ create_imdb_tables <- function(x) {
   results <- dbSendQuery(movies_db, create_table_imdb_episodes)
   
   dbClearResult(results)
+  
+  dbDisconnect(movies_db)
   
 }
 
@@ -113,7 +118,7 @@ create_ml_tables <- function(x) {
   title TEXT,
   genres TEXT);"
   
-  results <- dbSendQuery(movies_db, create_table)
+  results <- dbSendQuery(movies_db, create_table_ml_titles)
   
   dbClearResult(results)
   
@@ -167,7 +172,7 @@ create_ml_tables <- function(x) {
   dbClearResult(results)
   
   
-  ## create links table
+  ## create genome scores table
   create_table_ml_genome_scores <- "CREATE TABLE movie_lens_genome_scores (
   movieId BIGINT,
   tagId BIGINT,
@@ -177,4 +182,17 @@ create_ml_tables <- function(x) {
   
   dbClearResult(results)
   
+  dbDisconnect(movies_db)
+  
 }
+
+
+### create imdb tables
+
+create_imdb_tables()
+
+
+### create movie lens tables
+
+create_ml_tables()
+

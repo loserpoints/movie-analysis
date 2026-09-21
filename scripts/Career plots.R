@@ -20,7 +20,7 @@ name_id <- name_id$nconst
 
 career <- horror %>%
   
-  filter(grepl(name_id))
+  filter(grepl(name_id, directors))
 
 
 

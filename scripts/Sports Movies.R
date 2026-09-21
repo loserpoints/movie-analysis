@@ -81,9 +81,10 @@ dbClearResult(tags_per_movie_db)
 
 ### combine all sports movie data from previous two queries
 
-  
+sports_test <- left_join(sports, tags_per_movie, by = "imdbId")
 
-### create scaled popularity metric based on 11 year intervals
+
+### create scaled popularity metric based on 9 year intervals
 
 years <- unique(as.numeric(sports$startYear))
 

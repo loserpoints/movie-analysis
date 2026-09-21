@@ -57,17 +57,17 @@ get_ml_data <- function(x) {
   
   ### read unzipped movielens csv files
   
-  ml_movies <- read.csv("data/ml-25m/movies.csv", stringsAsFactors = F)
+  ml_movies <- read.csv("data/movielens/ml-25m/movies.csv", stringsAsFactors = F)
   
-  ml_tags <- read.csv("data/ml-25m/tags.csv", stringsAsFactors = F)
+  ml_tags <- read.csv("data/movielens/ml-25m/tags.csv", stringsAsFactors = F)
   
-  ml_ratings <- read.csv("data/ml-25m/ratings.csv")
+  ml_ratings <- read.csv("data/movielens/ml-25m/ratings.csv")
   
-  ml_links <- read.csv("data/ml-25m/links.csv")
+  ml_links <- read.csv("data/movielens/ml-25m/links.csv")
   
-  ml_genome_tags <- read.csv("data/ml-25m/genome-tags.csv", stringsAsFactors = F)
+  ml_genome_tags <- read.csv("data/movielens/ml-25m/genome-tags.csv", stringsAsFactors = F)
   
-  ml_genome_scores <- read.csv("data/ml-25m/genome-scores.csv")
+  ml_genome_scores <- read.csv("data/movielens/ml-25m/genome-scores.csv")
   
   
   ## put movie lens data frames in list to return
