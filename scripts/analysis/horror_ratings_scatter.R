@@ -9,7 +9,7 @@ loadfonts(device = "win")
 
 ### load the shared horror data set
 
-source("scripts/04-horror-base.R")
+source("scripts/04_horror_base.R")
 
 
 horror_2020 <- horror %>%
@@ -41,7 +41,7 @@ ggplot(horror_2020, aes(numVotes, averageRating, label = primaryTitle)) +
         plot.subtitle = element_text(size = 16, face = "italic", family = "Trebuchet MS", hjust = 0.5),
         legend.position = "none")
 
-ggsave(filename = "viz/horror_2020_scatter.png", width = 21.333, height = 10.666)
+ggsave(filename = "viz/horror_ratings_2020.png", width = 21.333, height = 10.666)
 
 
 horror_2019 <- horror %>%
@@ -74,4 +74,4 @@ ggplot(horror_2019, aes(numVotes, averageRating, label = primaryTitle)) +
         plot.subtitle = element_text(size = 16, face = "italic", family = "Trebuchet MS", hjust = 0.5),
         legend.position = "none")
 
-ggsave(filename = "viz/horror_2019_scatter_truncated.png", width = 21.333, height = 10.666)
+ggsave(filename = "viz/horror_ratings_2019_truncated.png", width = 21.333, height = 10.666)

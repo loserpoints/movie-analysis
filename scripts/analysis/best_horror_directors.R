@@ -7,7 +7,7 @@ library(scales)
 
 ### load the shared horror data set
 
-source("scripts/04-horror-base.R")
+source("scripts/04_horror_base.R")
 
 
 ### fetch and format data from local database
@@ -169,4 +169,4 @@ ggplot(top_horror_directors_plot, aes(adj_score, fill = n)) +
         legend.text = element_text(size = 12, family = "Trebuchet MS"),
         legend.key.width = unit(1.5, "cm"))
 
-ggsave(filename = "viz/horror_directors.png", width = 21.333, height = 10.666)
+ggsave(filename = "viz/best_horror_directors.png", width = 21.333, height = 10.666)

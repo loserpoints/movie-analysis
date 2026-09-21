@@ -114,7 +114,7 @@ ggplot(horror_best_stacked, aes(x= 1, value, fill = name)) +
         strip.text = element_text(angle = 180),
         legend.position = "right")
 
-ggsave(filename = "data/horror_best_by_year.png", width = 21.333, height = 10.666)  
+ggsave(filename = "data/best_horror_by_year.png", width = 21.333, height = 10.666)  
 
 
 
@@ -198,7 +198,7 @@ ggplot(best_ever, aes(-rank, y = 1, label = label)) +
         strip.background = element_blank(),
         strip.text = element_blank())
 
-ggsave(filename = "data/imdb_top_99_horror.png", height = 10.666, width = 21.333)
+ggsave(filename = "data/top_99_horror.png", height = 10.666, width = 21.333)
 
 
 

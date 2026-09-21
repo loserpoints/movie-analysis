@@ -9,7 +9,7 @@ loadfonts(device = "win")
 
 ### load the shared horror data set
 
-source("scripts/04-horror-base.R")
+source("scripts/04_horror_base.R")
 
 
 horror_best <- horror_adj %>%
@@ -44,4 +44,4 @@ ggplot(horror_best, aes(startYear, averageRating, label = primaryTitle)) +
         plot.subtitle = element_text(size = 16, face = "italic", family = "Trebuchet MS", hjust = 0.5),
         legend.position = "none")
 
-ggsave(filename = "viz/horror_best_by_year.png", width = 21.333, height = 10.666)
+ggsave(filename = "viz/best_horror_by_year.png", width = 21.333, height = 10.666)
