@@ -8,7 +8,7 @@ loadfonts(device = "win")
 
 ### load the shared horror data set
 
-source("scripts/Horror base.R")
+source("scripts/04_horror_base.R")
 
 
 best_ever <- horror_adj %>%
@@ -58,4 +58,4 @@ ggplot(best_ever, aes(-rank, y = 1, label = label)) +
         strip.background = element_blank(),
         strip.text = element_blank())
 
-ggsave(filename = "imdb_top_99_horror.png", height = 10.666, width = 21.333)
+ggsave(filename = "viz/top_99_horror.png", height = 10.666, width = 21.333)

@@ -168,7 +168,7 @@ ggplot(franchise_scatter, aes(facet, adj_score, label = franchise)) +
         strip.background = element_rect(fill = "gray24"),
         strip.text = element_text(size = 16, color = "white", face = "bold", family = "Trebuchet MS"))
 
-ggsave("viz/franchises_faceted.png", width = 21.333, height = 10.666)
+ggsave("viz/horror_franchises_faceted.png", width = 21.333, height = 10.666)
 
 
 
@@ -230,4 +230,4 @@ ggplot(franchise_comparison, aes(startYear, adj_score, color = franchise, label 
         legend.title = element_text(size = 14, family = "Trebuchet MS"),
         legend.text = element_text(size = 12, family = "Trebuchet MS"))
 
-ggsave("viz/franchise_comparison.png", width = 21.333, height = 10.666)
+ggsave("viz/horror_franchises_comparison.png", width = 21.333, height = 10.666)

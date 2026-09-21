@@ -14,11 +14,12 @@ Two public sources, loaded into a local MariaDB database:
   and names, published by IMDb as gzipped TSVs.
 - **MovieLens** (GroupLens Research) — ratings, tags, links and the tag genome.
 
-Building the database is three steps, run in order and in the same session:
+Building the database is three steps. The numbered scripts run in order, in
+the same session:
 
-1. `scripts/Data gathering (public).R` — downloads the source files
-2. `scripts/Create MySQL Tables.R` — creates the empty tables
-3. `scripts/Update MySQL database.R` — writes the downloaded data into them
+1. `scripts/01_download_source_data.R` — downloads the source files
+2. `scripts/02_create_tables.R` — creates the empty tables
+3. `scripts/03_load_tables.R` — writes the downloaded data into them
 
 Step 3 reads objects left in the session by step 1, so they can't be run
 independently.
@@ -29,25 +30,34 @@ loading scripts to need adjustment before they run today.
 
 ## What's here
 
-`scripts/Horror base.R` builds the data set the horror analyses share — the
+`scripts/04_horror_base.R` builds the data set the horror analyses share — the
 horror movies with their ratings and directors, plus popularity and quality
 scores derived from them. Each analysis script sources it, so it runs first
 automatically.
 
+The analyses live in `scripts/analysis/`:
+
 | Script | Question it answers |
 |---|---|
-| `Best horror directors.R` | Which horror directors have the strongest body of work? |
-| `Career plots.R` | How does a director's rating trajectory look over a career? |
-| `Slashers.R` | How do slasher films rate against horror generally? |
-| `Horror franchises.R` | How do franchises hold up across sequels? |
-| `Best of the year.R`, `Best ever.R` | Top-rated titles by year and all-time |
-| `Sports Movies.R`, `TV Series.R` | The same treatment for other categories |
-| `Exploration.R` | Scratch work, kept deliberately |
+| `best_horror_directors.R` | Which horror directors have the strongest body of work? |
+| `director_careers.R` | How does one director's rating trajectory look over a career? |
+| `top_99_horror.R` | The best horror movies since 1960 |
+| `top_99_slashers.R` | The same, narrowed to slashers via MovieLens tags |
+| `best_horror_by_year.R` | The strongest horror movie of each year |
+| `horror_ratings_scatter.R` | How a single year's horror releases spread across popularity and rating |
+| `horror_franchises.R` | How franchises hold up across sequels |
+| `top_99_sports_movies.R` | The same treatment applied to sports movies |
+| `tv_series_ratings.R` | Episode ratings across the run of a series |
 
-`Horror franchises.R`, `Sports Movies.R` and `TV Series.R` run their own
-queries and don't depend on the shared base.
+`horror_franchises.R`, `top_99_sports_movies.R` and `tv_series_ratings.R` run
+their own queries and don't depend on the shared base.
 
-Charts are in `viz/`.
+`scripts/exploration.R` is scratch work — earlier versions of several of these
+analyses, kept for reference. It writes to `data/` rather than `viz/` so
+running it can't overwrite the committed charts.
+
+Charts are in `viz/`, named after the script that produces them. Every script
+writes there; paths are relative to the repository root, so run R from there.
 
 ## Running these
 

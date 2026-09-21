@@ -6,7 +6,7 @@
 ###   imdb_names  - the names table, for looking people up by name
 ###
 ### source this before running anything in the analysis scripts:
-###   source("scripts/Horror base.R")
+###   source("scripts/04_horror_base.R")
 
 
 ### load required packages
