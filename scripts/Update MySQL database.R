@@ -24,7 +24,7 @@ update_imdb <- function(x) {
     dbConnect(
       MariaDB(),
       user = "root",
-      password = password,
+      password = Sys.getenv("MOVIES_DB_PASSWORD"),
       dbname = "movies",
       host = "localhost"
     )
@@ -102,7 +102,7 @@ update_ml <- function(x) {
     dbConnect(
       MariaDB(),
       user = "root",
-      password = password,
+      password = Sys.getenv("MOVIES_DB_PASSWORD"),
       dbname = "movies",
       host = "localhost"
     )

@@ -1,0 +1,12 @@
+# R session artifacts
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# Local environment — holds MOVIES_DB_PASSWORD. Never commit.
+.Renviron
+
+# Downloaded source data (large, and re-fetchable from the original sources)
+**/data
+**/Data

@@ -25,7 +25,7 @@ create_imdb_tables <- function(x) {
     dbConnect(
       MariaDB(),
       user = "root",
-      password = password,
+      password = Sys.getenv("MOVIES_DB_PASSWORD"),
       dbname = "movies",
       host = "localhost"
     )
@@ -100,7 +100,7 @@ create_ml_tables <- function(x) {
     dbConnect(
       MariaDB(),
       user = "root",
-      password = password,
+      password = Sys.getenv("MOVIES_DB_PASSWORD"),
       dbname = "movies",
       host = "localhost"
     )

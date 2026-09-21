@@ -1,5 +1,6 @@
 ### load required packages
 
+library(RMariaDB)
 library(rvest)
 library(tidyverse)
 library(stringr)
@@ -41,7 +42,7 @@ movies_db <-
   dbConnect(
     MariaDB(),
     user = "root",
-    password = password,
+    password = Sys.getenv("MOVIES_DB_PASSWORD"),
     dbname = "movies",
     host = "localhost"
   )

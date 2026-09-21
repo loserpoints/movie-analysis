@@ -1,3 +1,4 @@
+library(RMariaDB)
 library(rvest)
 library(tidyverse)
 library(ggthemes)
@@ -13,7 +14,7 @@ movies_db <-
   dbConnect(
     MariaDB(),
     user = "root",
-    password = "grunge_16",
+    password = Sys.getenv("MOVIES_DB_PASSWORD"),
     dbname = "movies",
     host = "localhost"
   )
