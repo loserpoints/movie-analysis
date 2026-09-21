@@ -6,6 +6,11 @@ library(extrafont)
 loadfonts(device = "win")
 
 
+### load the shared horror data set
+
+source("scripts/Horror base.R")
+
+
 best_ever <- horror_adj %>%
   
   filter(startYear >= 1960) %>%

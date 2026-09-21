@@ -6,10 +6,15 @@ library(ggrepel)
 loadfonts(device = "win")
 
 
+### load the shared horror data set
+
+source("scripts/Horror base.R")
+
+
 person_name <- "John Carpenter" 
 
 
-name_id <- names %>%
+name_id <- imdb_names %>%
   
   filter(primaryName == person_name,
          birthYear != "\\N")

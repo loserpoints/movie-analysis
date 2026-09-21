@@ -1,3 +1,9 @@
+### step 3 of 3 in building the movies database
+###
+### writes the data downloaded in step 1 into the tables created in step 2.
+### expects imdb_data and ml_data to already exist in the session - run
+### "Data gathering (public).R" first or this will fail.
+
 ### load required packages
 
 library(RMariaDB)
@@ -24,7 +30,7 @@ update_imdb <- function(x) {
   
   dbWriteTable(
     movies_db,
-    value = imdb_data[[1]],
+    value = imdb_data$titles,
     row.names = FALSE,
     name = "imdb_titles",
     overwrite = TRUE
@@ -34,7 +40,7 @@ update_imdb <- function(x) {
   
   dbWriteTable(
     movies_db,
-    value = imdb_data[[2]],
+    value = imdb_data$basics,
     row.names = FALSE,
     name = "imdb_basics",
     overwrite = TRUE
@@ -44,7 +50,7 @@ update_imdb <- function(x) {
   
   dbWriteTable(
     movies_db,
-    value = imdb_data[[3]],
+    value = imdb_data$crew,
     row.names = FALSE,
     name = "imdb_crew",
     overwrite = TRUE
@@ -52,7 +58,7 @@ update_imdb <- function(x) {
   
   ## update names table
   
-  names_sql <- imdb_data[[4]] %>%
+  names_sql <- imdb_data$names %>%
     
     mutate(nchar = nchar(primaryName)) %>%
     
@@ -73,7 +79,7 @@ update_imdb <- function(x) {
   
   dbWriteTable(
     movies_db,
-    value = imdb_data[[5]],
+    value = imdb_data$episodes,
     row.names = FALSE,
     name = "imdb_episodes",
     overwrite = TRUE
@@ -104,7 +110,7 @@ update_ml <- function(x) {
   
   dbWriteTable(
     movies_db,
-    value = ml_data[[1]],
+    value = ml_data$movies,
     row.names = FALSE,
     name = "movie_lens_titles",
     overwrite = TRUE
@@ -114,7 +120,7 @@ update_ml <- function(x) {
   
   dbWriteTable(
     movies_db,
-    value = ml_data[[2]],
+    value = ml_data$tags,
     row.names = FALSE,
     name = "movie_lens_tags",
     overwrite = TRUE
@@ -124,7 +130,7 @@ update_ml <- function(x) {
   
   dbWriteTable(
     movies_db,
-    value = ml_data[[3]],
+    value = ml_data$ratings,
     row.names = FALSE,
     name = "movie_lens_ratings",
     overwrite = TRUE
@@ -134,7 +140,7 @@ update_ml <- function(x) {
   
   dbWriteTable(
     movies_db,
-    value = ml_data[[4]],
+    value = ml_data$links,
     row.names = FALSE,
     name = "movie_lens_links",
     overwrite = TRUE
@@ -144,7 +150,7 @@ update_ml <- function(x) {
   
   dbWriteTable(
     movies_db,
-    value = ml_data[[5]],
+    value = ml_data$genome_tags,
     row.names = FALSE,
     name = "movie_lens_genome_tags",
     overwrite = TRUE
@@ -154,7 +160,7 @@ update_ml <- function(x) {
   
   dbWriteTable(
     movies_db,
-    value = ml_data[[6]],
+    value = ml_data$genome_scores,
     row.names = FALSE,
     name = "movie_lens_genome_scores",
     overwrite = TRUE

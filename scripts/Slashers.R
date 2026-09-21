@@ -7,6 +7,11 @@ library(extrafont)
 loadfonts(device = "win")
 
 
+### load the shared horror data set
+
+source("scripts/Horror base.R")
+
+
 ### fetch and format data from local database
 
 movies_db <-

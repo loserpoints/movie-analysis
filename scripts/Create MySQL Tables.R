@@ -1,3 +1,7 @@
+### step 2 of 3 in building the movies database
+###
+### creates the empty tables. only needs running once, on a fresh database.
+
 ### load dependencies
 
 library(tidyverse)

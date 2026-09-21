@@ -1,3 +1,9 @@
+### step 1 of 3 in building the movies database
+###
+### downloads the imdb and movielens source files and reads them into memory.
+### leaves two lists behind, imdb_data and ml_data, which step 3 writes to
+### mysql. run steps 1 to 3 in order, in the same session.
+
 ### load required packages
 
 library(tidyverse)
@@ -38,7 +44,13 @@ get_imdb_data <- function(x) {
   
   ## put imdb data frames in list to return
   
-  imdb_data <- list(imdb_titles, imdb_basics, imdb_crew, imdb_names, imdb_episodes)
+  imdb_data <- list(
+    titles = imdb_titles,
+    basics = imdb_basics,
+    crew = imdb_crew,
+    names = imdb_names,
+    episodes = imdb_episodes
+  )
   
   return(imdb_data)
   
@@ -72,7 +84,14 @@ get_ml_data <- function(x) {
   
   ## put movie lens data frames in list to return
   
-  ml_data <- list(ml_movies, ml_tags, ml_ratings, ml_links, ml_genome_tags, ml_genome_scores)
+  ml_data <- list(
+    movies = ml_movies,
+    tags = ml_tags,
+    ratings = ml_ratings,
+    links = ml_links,
+    genome_tags = ml_genome_tags,
+    genome_scores = ml_genome_scores
+  )
   
   return(ml_data)
     
