@@ -145,7 +145,7 @@ ggplot(franchise_scatter, aes(facet, adj_score, label = franchise)) +
   
   facet_wrap(~facet, nrow = 1, scales = "free_x") +
   
-  geom_hline(yintercept = mean(horror_franchises$adj_score), linetype = "dashed", color = "gray 54") +
+  geom_hline(yintercept = mean(horror_franchises$adj_score), linetype = "dashed", color = "gray54") +
   
   geom_point(size = 4, color = "gray54") +
   
@@ -200,7 +200,7 @@ ggplot(franchise_comparison, aes(startYear, adj_score, color = franchise, label 
   
   facet_wrap(~franchise, nrow = 1) +
   
-  geom_hline(yintercept = mean(horror_franchises$adj_score), linetype = "dashed", color = "gray 54") +
+  geom_hline(yintercept = mean(horror_franchises$adj_score), linetype = "dashed", color = "gray54") +
   
   geom_point(size = 4) +
   
@@ -231,4 +231,3 @@ ggplot(franchise_comparison, aes(startYear, adj_score, color = franchise, label 
         legend.text = element_text(size = 12, family = "Trebuchet MS"))
 
 ggsave("viz/franchise_comparison.png", width = 21.333, height = 10.666)
-=

@@ -45,7 +45,7 @@ slasher_tags <- slasher_tags %>%
   
   unique() %>%
   
-  mutate(tconst = paste0("tt00", imdbId),
+  mutate(tconst = sprintf("tt%07d", imdbId),
          slasher = "y")
 
 

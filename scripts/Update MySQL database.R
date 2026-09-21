@@ -4,16 +4,6 @@ library(RMariaDB)
 library(tidyverse)
 
 
-### update imdb tables in mysql
-
-update_imdb()
-
-
-### update movie lens data in mysql
-
-update_ml()
-
-
 ### define function to update the imdb tables in mysql
 
 update_imdb <- function(x) {
@@ -88,6 +78,8 @@ update_imdb <- function(x) {
     name = "imdb_episodes",
     overwrite = TRUE
   )
+  
+  dbDisconnect(movies_db)
   
 }
   
@@ -168,4 +160,17 @@ update_ml <- function(x) {
     overwrite = TRUE
   )
   
+  dbDisconnect(movies_db)
+  
 }
+
+
+### update imdb tables in mysql
+
+update_imdb()
+
+
+### update movie lens data in mysql
+
+update_ml()
+

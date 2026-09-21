@@ -8,7 +8,7 @@ loadfonts(device = "win")
 
 best_ever <- horror_adj %>%
   
-  filter(startYear <= 1960) %>%
+  filter(startYear >= 1960) %>%
   
   arrange(-adj_score) %>%
   

@@ -18,9 +18,9 @@ ggplot(horror_2020, aes(numVotes, averageRating, label = primaryTitle)) +
   
   geom_label_repel(fill = "firebrick4", color = "white", fontface = "bold", family = "Trebuchet MS", segment.color = "gray54") +
   
-  geom_vline(xintercept = mean(horror_2020$numVotes), linetype = "dashed", color = "gray 54") +
+  geom_vline(xintercept = mean(horror_2020$numVotes), linetype = "dashed", color = "gray54") +
   
-  geom_hline(yintercept = mean(horror_2020$averageRating), linetype = "dashed", color = "gray 54") +
+  geom_hline(yintercept = mean(horror_2020$averageRating), linetype = "dashed", color = "gray54") +
   
   theme_few() +
   
@@ -28,7 +28,7 @@ ggplot(horror_2020, aes(numVotes, averageRating, label = primaryTitle)) +
   
   ylab("Average Rating\n") +
   
-  ggtitle("IMDB Horror Movie Ratings 2019", subtitle = "") +
+  ggtitle("IMDB Horror Movie Ratings 2020", subtitle = "") +
   
   theme(axis.text = element_text(size = 16, face = "bold", family = "Trebuchet MS"),
         axis.title = element_text(size = 18, face = "bold", family = "Trebuchet MS"),
@@ -49,9 +49,9 @@ ggplot(horror_2019, aes(numVotes, averageRating, label = primaryTitle)) +
   
   geom_label_repel(fill = "firebrick4", color = "white", fontface = "bold", family = "Trebuchet MS", segment.color = "gray54") +
   
-  geom_vline(xintercept = mean(horror_2019$numVotes), linetype = "dashed", color = "gray 54") +
+  geom_vline(xintercept = mean(horror_2019$numVotes), linetype = "dashed", color = "gray54") +
   
-  geom_hline(yintercept = mean(horror_2019$averageRating), linetype = "dashed", color = "gray 54") +
+  geom_hline(yintercept = mean(horror_2019$averageRating), linetype = "dashed", color = "gray54") +
   
   theme_few() +
   
@@ -97,7 +97,7 @@ ggplot(horror_best, aes(startYear, averageRating, label = primaryTitle)) +
   
   ylab("Adjusted Average Rating\n") +
   
-  ggtitle("IMDB Top Horror Movie by Year Since 1975", subtitle = "movies ranked using a blended score based on popularity and quality") +
+  ggtitle("IMDB Top Horror Movie by Year Since 1966", subtitle = "movies ranked using a blended score based on popularity and quality") +
   
   theme(axis.text = element_text(size = 16, face = "bold", family = "Trebuchet MS"),
         axis.title = element_text(size = 18, face = "bold", family = "Trebuchet MS"),
