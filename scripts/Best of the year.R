@@ -7,6 +7,11 @@ library(ggrepel)
 loadfonts(device = "win")
 
 
+### load the shared horror data set
+
+source("scripts/Horror base.R")
+
+
 horror_2020 <- horror %>%
   
   filter(startYear == 2020)

@@ -1,3 +1,14 @@
+### builds the shared horror data set used by the analysis scripts
+###
+### produces three objects:
+###   horror      - horror movies with ratings and directors
+###   horror_adj  - the same, with popularity, quality and adj_score added
+###   imdb_names  - the names table, for looking people up by name
+###
+### source this before running anything in the analysis scripts:
+###   source("scripts/Horror base.R")
+
+
 ### load required packages
 
 library(RMariaDB)
@@ -22,12 +33,18 @@ movies_db <-
 horror_query <- 
   
   "
-  SELECT * FROM imdb_basics
+  SELECT imdb_basics.*, imdb_titles.averageRating, imdb_titles.numVotes, imdb_crew.directors
+
+  FROM imdb_basics
 
 	INNER JOIN imdb_titles
 
 	ON imdb_basics.tconst = imdb_titles.tconst
     AND numVotes > 500
+
+	INNER JOIN imdb_crew
+
+	ON imdb_basics.tconst = imdb_crew.tconst
 
 	WHERE genres LIKE '%Horror%'
     AND genres NOT LIKE '%Documentary%'
@@ -41,6 +58,24 @@ horror_db <- dbSendQuery(movies_db, horror_query)
 horror <- dbFetch(horror_db)
 
 dbClearResult(horror_db)
+
+
+### fetch the names table so directors can be looked up by name
+
+names_query <- 
+  
+  "
+  SELECT * FROM imdb_names;
+
+    "
+
+imdb_names_db <- dbSendQuery(movies_db, names_query)
+
+imdb_names <- dbFetch(imdb_names_db)
+
+dbClearResult(imdb_names_db)
+
+dbDisconnect(movies_db)
 
 
 
@@ -72,4 +107,3 @@ horror_adj <- do.call(rbind, df_list) %>%
   mutate(rating_rank = row_number(),
          quality = rescale(rating_rank, to = c(0, 5)),
          adj_score = popularity + quality)
-

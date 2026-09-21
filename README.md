@@ -14,9 +14,14 @@ Two public sources, loaded into a local MariaDB database:
   and names, published by IMDb as gzipped TSVs.
 - **MovieLens** (GroupLens Research) — ratings, tags, links and the tag genome.
 
-`scripts/Data gathering (public).R` downloads them; `scripts/Create MySQL
-Tables.R` builds the schema and loads them; `scripts/Update MySQL database.R`
-refreshes it. Everything else queries that database.
+Building the database is three steps, run in order and in the same session:
+
+1. `scripts/Data gathering (public).R` — downloads the source files
+2. `scripts/Create MySQL Tables.R` — creates the empty tables
+3. `scripts/Update MySQL database.R` — writes the downloaded data into them
+
+Step 3 reads objects left in the session by step 1, so they can't be run
+independently.
 
 **These scripts were last run in 2020.** The IMDb dataset URLs are unchanged,
 but MovieLens release names and file layouts have shifted since, so expect the
@@ -24,15 +29,23 @@ loading scripts to need adjustment before they run today.
 
 ## What's here
 
+`scripts/Horror base.R` builds the data set the horror analyses share — the
+horror movies with their ratings and directors, plus popularity and quality
+scores derived from them. Each analysis script sources it, so it runs first
+automatically.
+
 | Script | Question it answers |
 |---|---|
 | `Best horror directors.R` | Which horror directors have the strongest body of work? |
 | `Career plots.R` | How does a director's rating trajectory look over a career? |
-| `Horror.R`, `Slashers.R` | How do horror and slasher films rate against each other? |
+| `Slashers.R` | How do slasher films rate against horror generally? |
 | `Horror franchises.R` | How do franchises hold up across sequels? |
 | `Best of the year.R`, `Best ever.R` | Top-rated titles by year and all-time |
 | `Sports Movies.R`, `TV Series.R` | The same treatment for other categories |
 | `Exploration.R` | Scratch work, kept deliberately |
+
+`Horror franchises.R`, `Sports Movies.R` and `TV Series.R` run their own
+queries and don't depend on the shared base.
 
 Charts are in `viz/`.
 
