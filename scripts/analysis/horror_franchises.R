@@ -1,9 +1,7 @@
 ### load required packages
 
 library(RMariaDB)
-library(rvest)
 library(tidyverse)
-library(stringr)
 library(ggrepel)
 library(ggthemes)
 library(scales)
@@ -12,10 +10,14 @@ library(extrafont)
 
 ### load fonts for viz
 
-loadfonts(device = "win")
+if (.Platform$OS.type == "windows") loadfonts(device = "win")
 
 
 ### download list of franchise movies from imdb user
+###
+### note: imdb now requires a logged-in session for list exports, so this
+### download returns a sign-in page rather than the csv. the file has to be
+### exported by hand from the list page and saved to the path below.
 
 download.file("https://www.imdb.com/list/ls022487858/export?ref_=ttls_otexp", destfile = "data/imdb/horror_franchises.csv")
 

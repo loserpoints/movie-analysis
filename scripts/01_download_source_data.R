@@ -1,8 +1,8 @@
-### step 1 of 3 in building the movies database
+### step 1 of 2 in building the movies database
 ###
 ### downloads the imdb and movielens source files and reads them into memory.
-### leaves two lists behind, imdb_data and ml_data, which step 3 writes to
-### mysql. run steps 1 to 3 in order, in the same session.
+### leaves two lists behind, imdb_data and ml_data, which step 2 writes to
+### mysql. run both steps in order, in the same session.
 
 ### load required packages
 

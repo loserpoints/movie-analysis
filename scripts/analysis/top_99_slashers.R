@@ -1,15 +1,14 @@
 library(RMariaDB)
-library(rvest)
 library(tidyverse)
 library(ggthemes)
 library(extrafont)
 
-loadfonts(device = "win")
+if (.Platform$OS.type == "windows") loadfonts(device = "win")
 
 
 ### load the shared horror data set
 
-source("scripts/04_horror_base.R")
+source("scripts/03_horror_base.R")
 
 
 ### fetch and format data from local database

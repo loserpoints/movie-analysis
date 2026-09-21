@@ -14,15 +14,20 @@ Two public sources, loaded into a local MariaDB database:
   and names, published by IMDb as gzipped TSVs.
 - **MovieLens** (GroupLens Research) — ratings, tags, links and the tag genome.
 
-Building the database is three steps. The numbered scripts run in order, in
-the same session:
+Building the database is two steps. The numbered scripts run in order, in the
+same session:
 
 1. `scripts/01_download_source_data.R` — downloads the source files
-2. `scripts/02_create_tables.R` — creates the empty tables
-3. `scripts/03_load_tables.R` — writes the downloaded data into them
+2. `scripts/02_load_tables.R` — writes them into MySQL and indexes the join columns
 
-Step 3 reads objects left in the session by step 1, so they can't be run
-independently.
+Step 2 reads objects left in the session by step 1, so they can't be run
+independently. The tables are created by `dbWriteTable` from the data frames
+themselves, so there's no separate schema definition to keep in sync.
+
+A note on the table names, which follow IMDb's own file naming and are
+confusing as a result: `imdb_titles` holds the **ratings** file
+(`title.ratings.tsv`) — average rating and vote count. The actual title
+metadata is in `imdb_basics`.
 
 **These scripts were last run in 2020.** The IMDb dataset URLs are unchanged,
 but MovieLens release names and file layouts have shifted since, so expect the
@@ -30,7 +35,7 @@ loading scripts to need adjustment before they run today.
 
 ## What's here
 
-`scripts/04_horror_base.R` builds the data set the horror analyses share — the
+`scripts/03_horror_base.R` builds the data set the horror analyses share — the
 horror movies with their ratings and directors, plus popularity and quality
 scores derived from them. Each analysis script sources it, so it runs first
 automatically.
@@ -61,8 +66,27 @@ writes there; paths are relative to the repository root, so run R from there.
 
 ## Running these
 
-The database scripts read the password from an environment variable rather
-than hardcoding it. Set it in `~/.Renviron`:
+### Packages
+
+```r
+install.packages(c("tidyverse", "RMariaDB", "ggthemes", "ggrepel",
+                   "scales", "extrafont", "rvest"))
+
+# not on CRAN
+remotes::install_github("johannesbjork/LaCroixColoR")
+```
+
+`rvest` is only needed for `exploration.R`, and `LaCroixColoR` only for
+`tv_series_ratings.R`.
+
+These were written against the package versions current in 2019–2020 and use
+some idioms that have since been superseded — `summarize_all`, `top_n`,
+`..count..`. They still run, and have been deliberately left as written.
+
+### Database
+
+The scripts read the password from an environment variable rather than
+hardcoding it. Set it in `~/.Renviron`:
 
 ```
 MOVIES_DB_PASSWORD=your_password_here
@@ -70,6 +94,13 @@ MOVIES_DB_PASSWORD=your_password_here
 
 Then restart R. The scripts expect a local MariaDB instance with a `movies`
 database.
+
+### Fonts
+
+The charts use Trebuchet MS via `extrafont`. Font registration is guarded so
+the scripts don't error on macOS or Linux, but the font itself needs to be
+installed for the charts to render as they were designed — otherwise ggplot
+falls back to a default and warns.
 
 ## License
 
