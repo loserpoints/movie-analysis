@@ -8,30 +8,34 @@ than actively maintained.
 
 ## Data
 
-Two public sources, loaded into a local MariaDB database:
+Two public sources, downloaded the first time a script needs them:
 
 - **IMDb datasets** (`datasets.imdbws.com`) — titles, ratings, crew, episodes
-  and names, published by IMDb as gzipped TSVs.
-- **MovieLens** (GroupLens Research) — ratings, tags, links and the tag genome.
+  and names, published by IMDb as gzipped TSVs and refreshed daily.
+- **MovieLens** (GroupLens Research) — ratings, tags, links and the tag genome,
+  from the `ml-25m` release.
 
-Building the database is two steps. The numbered scripts run in order, in the
-same session:
+`scripts/00_get_data.R` handles both. Every script sources it and calls
+`connect_movies_db()`, which downloads whatever is missing into `data/`, loads
+it into a [DuckDB](https://duckdb.org) database file at `data/movies.duckdb`,
+and connects to it. DuckDB runs inside R, so there is no database server to
+install and no password to set. The first run downloads about 1 GB of IMDb
+files and takes several minutes; after that, scripts reuse the database file
+and start straight away.
 
-1. `scripts/01_download_source_data.R` — downloads the source files
-2. `scripts/02_load_tables.R` — writes them into MySQL and indexes the join columns
+MovieLens (another 250 MB or so) is only fetched by the two scripts that use
+it, `top_99_slashers.R` and `top_99_sports_movies.R`, which call
+`connect_movies_db(movielens = TRUE)`.
 
-Step 2 reads objects left in the session by step 1, so they can't be run
-independently. The tables are created by `dbWriteTable` from the data frames
-themselves, so there's no separate schema definition to keep in sync.
+To refresh the data, delete `data/` and run any script. It is gitignored.
 
 A note on the table names, which follow IMDb's own file naming and are
 confusing as a result: `imdb_titles` holds the **ratings** file
 (`title.ratings.tsv`) — average rating and vote count. The actual title
 metadata is in `imdb_basics`.
 
-**These scripts were last run in 2020.** The IMDb dataset URLs are unchanged,
-but MovieLens release names and file layouts have shifted since, so expect the
-loading scripts to need adjustment before they run today.
+Until 2026 the data lived in a local MariaDB database, built by two scripts
+that had to run in the same session. Those are in the git history.
 
 ## What's here
 
@@ -69,7 +73,7 @@ writes there; paths are relative to the repository root, so run R from there.
 ### Packages
 
 ```r
-install.packages(c("tidyverse", "RMariaDB", "ggthemes", "ggrepel",
+install.packages(c("tidyverse", "duckdb", "ggthemes", "ggrepel",
                    "scales", "extrafont", "rvest"))
 
 # not on CRAN
@@ -82,18 +86,6 @@ remotes::install_github("johannesbjork/LaCroixColoR")
 These were written against the package versions current in 2019–2020 and use
 some idioms that have since been superseded — `summarize_all`, `top_n`,
 `..count..`. They still run, and have been deliberately left as written.
-
-### Database
-
-The scripts read the password from an environment variable rather than
-hardcoding it. Set it in `~/.Renviron`:
-
-```
-MOVIES_DB_PASSWORD=your_password_here
-```
-
-Then restart R. The scripts expect a local MariaDB instance with a `movies`
-database.
 
 ### Fonts
 

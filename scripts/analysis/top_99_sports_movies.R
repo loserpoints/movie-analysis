@@ -1,57 +1,50 @@
 ### load required packages
 
-library(RMariaDB)
 library(tidyverse)
 library(scales)
 
 
 ### fetch and format data from local database
 
-movies_db <-
-  
-  dbConnect(
-    MariaDB(),
-    user = "root",
-    password = Sys.getenv("MOVIES_DB_PASSWORD"),
-    dbname = "movies",
-    host = "localhost"
-  )
+source("scripts/00_get_data.R")
+
+movies_db <- connect_movies_db(movielens = TRUE)
 
 
 sports_query <- 
   
-  '
+  "
 SELECT imdbId, primaryTitle, startYear, numVotes, averageRating, tag, relevance FROM movie_lens_genome_scores
 
-STRAIGHT_JOIN movie_lens_genome_tags
+INNER JOIN movie_lens_genome_tags
 	  ON movie_lens_genome_tags.tagId = movie_lens_genome_scores.tagId 
 
 INNER JOIN movie_lens_links
 	  ON movie_lens_links.movieId = movie_lens_genome_scores.movieId 
 
 INNER JOIN imdb_titles
-      ON concat("tt", LPAD(movie_lens_links.imdbId, 7, 0)) = imdb_titles.tconst
+      ON printf('tt%07d', movie_lens_links.imdbId) = imdb_titles.tconst
 
 INNER JOIN imdb_basics
-      ON concat("tt", LPAD(movie_lens_links.imdbId, 7, 0)) = imdb_basics.tconst
+      ON printf('tt%07d', movie_lens_links.imdbId) = imdb_basics.tconst
 
   AND numVotes >= 500
-  AND (titleType = "movie" OR titleType = "video")
+  AND (titleType = 'movie' OR titleType = 'video')
   AND runtimeMinutes > 75
 
   WHERE
 	(
-	tag LIKE "%sports%" OR
-    tag LIKE "%baseball%" OR
-    tag LIKE "%football%" OR
-    tag LIKE "%soccer%" OR
-    tag LIKE "%boxing%" OR
-    tag LIKE "%racing%" OR
-    tag LIKE "%bowling%" OR
-    tag LIKE "%olympics%"
+	tag ILIKE '%sports%' OR
+    tag ILIKE '%baseball%' OR
+    tag ILIKE '%football%' OR
+    tag ILIKE '%soccer%' OR
+    tag ILIKE '%boxing%' OR
+    tag ILIKE '%racing%' OR
+    tag ILIKE '%bowling%' OR
+    tag ILIKE '%olympics%'
     )
 
-    '
+    "
 
 sports_db <- dbSendQuery(movies_db, sports_query)
 

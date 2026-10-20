@@ -1,6 +1,5 @@
 ### load required packages
 
-library(RMariaDB)
 library(tidyverse)
 library(scales)
 
@@ -12,15 +11,9 @@ source("scripts/03_horror_base.R")
 
 ### fetch and format data from local database
 
-movies_db <-
-  
-  dbConnect(
-    MariaDB(),
-    user = "root",
-    password = Sys.getenv("MOVIES_DB_PASSWORD"),
-    dbname = "movies",
-    host = "localhost"
-  )
+source("scripts/00_get_data.R")
+
+movies_db <- connect_movies_db()
 
 
 horror_director_query <-
