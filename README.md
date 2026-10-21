@@ -61,12 +61,31 @@ The analyses live in `scripts/analysis/`:
 `horror_franchises.R`, `top_99_sports_movies.R` and `tv_series_ratings.R` run
 their own queries and don't depend on the shared base.
 
+`horror_franchises.R` can't run as things stand. It needs a franchise list
+exported from an IMDb user list (`ls022487858`) that no longer exists, and no
+copy was kept.
+
 `scripts/exploration.R` is scratch work — earlier versions of several of these
 analyses, kept for reference. It writes to `data/` rather than `viz/` so
 running it can't overwrite the committed charts.
 
 Charts are in `viz/`, named after the script that produces them. Every script
 writes there; paths are relative to the repository root, so run R from there.
+The committed charts were made from 2020 data. Running a script today
+overwrites its chart with one built from current IMDb data, so rankings
+shift: newer releases appear, and IMDb has since added Horror to the genres
+of films like *Jaws* and *The Silence of the Lambs*.
+
+From a terminal, run a script with `source()`:
+
+```
+Rscript -e 'source("scripts/analysis/top_99_horror.R")'
+```
+
+`Rscript scripts/analysis/top_99_horror.R` also works if Trebuchet MS is
+installed. Without it, that form fails: it prints each plot to a PDF as well,
+and the PDF device stops at the missing font, while `ggsave` falls back to a
+default font.
 
 ## Running these
 
@@ -91,8 +110,8 @@ some idioms that have since been superseded — `summarize_all`, `top_n`,
 
 The charts use Trebuchet MS via `extrafont`. Font registration is guarded so
 the scripts don't error on macOS or Linux, but the font itself needs to be
-installed for the charts to render as they were designed — otherwise ggplot
-falls back to a default and warns.
+installed for the charts to render as they were designed — otherwise the
+saved charts fall back to a default font.
 
 ## License
 

@@ -177,7 +177,7 @@ connect_movies_db <- function(movielens = FALSE) {
 
   dir.create("data", showWarnings = FALSE)
 
-  movies_db <- dbConnect(duckdb(), dbdir = "data/movies.duckdb")
+  movies_db <- dbConnect(duckdb(shared_home = FALSE), dbdir = "data/movies.duckdb")
 
   load_imdb(movies_db)
 

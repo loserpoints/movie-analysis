@@ -1,6 +1,7 @@
 ### load required packages
 
 library(tidyverse)
+library(ggthemes)
 library(LaCroixColoR)
 
 
@@ -13,7 +14,8 @@ movies_db <- connect_movies_db()
 
 series_query <- 
   
-  "SELECT * FROM imdb_basics
+  "SELECT imdb_episodes.*, imdb_titles.averageRating, imdb_titles.numVotes
+    FROM imdb_basics
 	INNER JOIN imdb_episodes 
     ON imdb_basics.tconst = imdb_episodes.parentTconst
     INNER JOIN imdb_titles

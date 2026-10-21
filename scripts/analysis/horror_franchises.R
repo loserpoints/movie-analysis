@@ -46,7 +46,9 @@ movies_db <- connect_movies_db()
 horror_query <- 
   
   "
-  SELECT * FROM imdb_basics
+  SELECT imdb_basics.*, imdb_titles.averageRating, imdb_titles.numVotes
+  
+  FROM imdb_basics
 
 	INNER JOIN imdb_titles
 

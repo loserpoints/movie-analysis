@@ -2,6 +2,7 @@
 
 library(tidyverse)
 library(scales)
+library(ggthemes)
 
 
 ### load the shared horror data set
@@ -20,11 +21,14 @@ horror_director_query <-
   
   "
   
-  SELECT * FROM imdb_basics
-  
+  SELECT imdb_basics.*, imdb_titles.averageRating, imdb_titles.numVotes,
+    imdb_crew.directors, imdb_names.primaryName
+
+  FROM imdb_basics
+
   INNER JOIN imdb_titles
   ON imdb_basics.tconst = imdb_titles.tconst
-  
+
   INNER JOIN imdb_crew
   ON imdb_titles.tconst = imdb_crew.tconst
   
@@ -91,7 +95,9 @@ top_horror_directors <- horror_director_totals %>%
 top_horror_directors_plot <- horror_director %>%
   
   filter(primaryName %in% top_horror_directors$primaryName) %>%
-  
+
+  left_join(top_horror_directors %>% select(primaryName, n), by = "primaryName") %>%
+
   mutate(startYear = as.numeric(startYear),
          primaryName = factor(primaryName, levels = top_horror_directors$primaryName))
 
