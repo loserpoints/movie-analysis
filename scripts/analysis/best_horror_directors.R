@@ -1,8 +1,8 @@
 ### load required packages
 
-library(RMariaDB)
 library(tidyverse)
 library(scales)
+library(ggthemes)
 
 
 ### load the shared horror data set
@@ -12,26 +12,23 @@ source("scripts/03_horror_base.R")
 
 ### fetch and format data from local database
 
-movies_db <-
-  
-  dbConnect(
-    MariaDB(),
-    user = "root",
-    password = Sys.getenv("MOVIES_DB_PASSWORD"),
-    dbname = "movies",
-    host = "localhost"
-  )
+source("scripts/00_get_data.R")
+
+movies_db <- connect_movies_db()
 
 
 horror_director_query <-
   
   "
   
-  SELECT * FROM imdb_basics
-  
+  SELECT imdb_basics.*, imdb_titles.averageRating, imdb_titles.numVotes,
+    imdb_crew.directors, imdb_names.primaryName
+
+  FROM imdb_basics
+
   INNER JOIN imdb_titles
   ON imdb_basics.tconst = imdb_titles.tconst
-  
+
   INNER JOIN imdb_crew
   ON imdb_titles.tconst = imdb_crew.tconst
   
@@ -57,27 +54,33 @@ dbClearResult(horror_director_db)
 
 horror_director <-
   
-  left_join(horror_director, horror_adj %>% select(tconst, adj_score))
+  left_join(horror_director, horror_adj %>% select(tconst, adj_score, popularity))
 
 
-### summarize director data to get summed ratings  
+### summarize director data to get summed ratings
+###
+### quantity counts each movie by its popularity (0 to 5, against horror
+### movies from the same years) divided by 5, so a widely seen movie counts
+### close to 1 and an obscure one close to 0. n stays the plain count for the
+### labels and the minimum of 4 movies.
 
 horror_director_totals <- horror_director %>%  
   
-  select(primaryName, adj_score) %>%
+  select(primaryName, adj_score, popularity) %>%
   
   group_by(primaryName) %>%
   
   add_tally() %>%
   
-  mutate(max = max(adj_score)) %>%
+  mutate(max = max(adj_score),
+         weighted_n = sum(popularity / 5)) %>%
   
   summarize_all(mean) %>%
   
   ungroup() %>%
   
   mutate(quality = rescale(adj_score, to = c(0, 10/3)),
-         quantity = rescale(n, to = c(0, 10/3)),
+         quantity = rescale(weighted_n, to = c(0, 10/3)),
          peak = rescale(max, to = c(0, 10/3)),
          total = quantity + quality + peak) %>%
   
@@ -98,7 +101,9 @@ top_horror_directors <- horror_director_totals %>%
 top_horror_directors_plot <- horror_director %>%
   
   filter(primaryName %in% top_horror_directors$primaryName) %>%
-  
+
+  left_join(top_horror_directors %>% select(primaryName, n), by = "primaryName") %>%
+
   mutate(startYear = as.numeric(startYear),
          primaryName = factor(primaryName, levels = top_horror_directors$primaryName))
 
@@ -153,7 +158,7 @@ ggplot(top_horror_directors_plot, aes(adj_score, fill = n)) +
   ylab("Count\n") +
   
   ggtitle("BEST HORROR DIRECTORS",
-          subtitle = "Based on quality and quantity of horror movies, data via IMDB\n") +
+          subtitle = "Based on quality and quantity of horror movies, with quantity weighted by each movie's popularity, data via IMDB\n") +
   
   scale_fill_gradient2(high = "firebrick3", low = "darkorchid4", mid = "gray93", limits = c(0, 24), midpoint = 11, name = "# of Horror Movies Directed\n") +
   

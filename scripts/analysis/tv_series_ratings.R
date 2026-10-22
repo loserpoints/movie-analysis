@@ -1,26 +1,21 @@
 ### load required packages
 
-library(RMariaDB)
 library(tidyverse)
+library(ggthemes)
 library(LaCroixColoR)
 
 
 ### fetch and format data from local database
 
-movies_db <-
-  
-  dbConnect(
-    MariaDB(),
-    user = "root",
-    password = Sys.getenv("MOVIES_DB_PASSWORD"),
-    dbname = "movies",
-    host = "localhost"
-  )
+source("scripts/00_get_data.R")
+
+movies_db <- connect_movies_db()
 
 
 series_query <- 
   
-  "SELECT * FROM imdb_basics
+  "SELECT imdb_episodes.*, imdb_titles.averageRating, imdb_titles.numVotes
+    FROM imdb_basics
 	INNER JOIN imdb_episodes 
     ON imdb_basics.tconst = imdb_episodes.parentTconst
     INNER JOIN imdb_titles

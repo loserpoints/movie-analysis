@@ -1,4 +1,3 @@
-library(RMariaDB)
 library(tidyverse)
 library(ggthemes)
 library(extrafont)
@@ -13,15 +12,9 @@ source("scripts/03_horror_base.R")
 
 ### fetch and format data from local database
 
-movies_db <-
-  
-  dbConnect(
-    MariaDB(),
-    user = "root",
-    password = Sys.getenv("MOVIES_DB_PASSWORD"),
-    dbname = "movies",
-    host = "localhost"
-  )
+source("scripts/00_get_data.R")
+
+movies_db <- connect_movies_db(movielens = TRUE)
 
 
 slasher_tags_query <- 
@@ -29,7 +22,7 @@ slasher_tags_query <-
   "
   SELECT imdbId, tag FROM movie_lens_tags 
 	
-	WHERE tag LIKE '%slasher%'
+	WHERE tag ILIKE '%slasher%'
 	
     "
 
