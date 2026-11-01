@@ -56,9 +56,11 @@ The analyses live in `scripts/analysis/`:
 | `horror_ratings_scatter.R` | How a single year's horror releases spread across popularity and rating |
 | `horror_franchises.R` | How franchises hold up across sequels |
 | `top_99_sports_movies.R` | The same treatment applied to sports movies |
+| `top_99_comedy.R` | The same treatment applied to comedies |
 | `tv_series_ratings.R` | Episode ratings across the run of a series |
 
-`horror_franchises.R`, `top_99_sports_movies.R` and `tv_series_ratings.R` run
+`horror_franchises.R`, `top_99_sports_movies.R`, `top_99_comedy.R` and
+`tv_series_ratings.R` run
 their own queries and don't depend on the shared base.
 
 `horror_franchises.R` can't run as things stand. It needs a franchise list
