@@ -1,3 +1,19 @@
+### note: this ranking doesn't measure the best comedies, and needs reworking
+### with movielens data before it means much.
+###
+### it picks comedies by imdb's genre tags, which list every genre a movie
+### touches, in alphabetical order rather than by how prominent each one is.
+### so a drama with some laughs is a comedy as much as airplane! is, and
+### dramas rate higher on imdb: 55 of the top 99 are also tagged drama (the
+### intouchables, life is beautiful, green book), while airplane! is 84th.
+### dropping everything tagged drama doesn't fix it either, because imdb
+### tags chaplin's comedies as drama too.
+###
+### the fix is to choose comedies by the movielens tag genome instead, which
+### scores how relevant a tag like "funny" or "comedy" is to each movie, the
+### way top_99_sports_movies.R does for sports tags.
+
+
 library(tidyverse)
 library(ggthemes)
 library(extrafont)
