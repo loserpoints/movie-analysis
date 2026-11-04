@@ -8,7 +8,8 @@
 ###
 ### the movielens tables are only built when a script asks for them, with
 ### connect_movies_db(movielens = TRUE), so the imdb-only scripts never
-### download movielens.
+### need movielens. they come from a clone of the private data repo if there
+### is one, and from grouplens if not.
 ###
 ### to refresh the data, delete the data folder and run any script.
 
@@ -72,28 +73,53 @@ imdb_tables <- list(
 )
 
 
+### define where the movielens files come from
+###
+### if loserpoints/private-data is cloned next to this repo, its copy of
+### movielens is used: the same files, converted to parquet. set
+### MOVIELENS_DIR to point somewhere else. otherwise the files are downloaded
+### from grouplens into data/movielens.
+
+movielens_private_dir <- Sys.getenv("MOVIELENS_DIR", "../private-data/movielens/ml-25m")
+
+movielens_source <- function(file) {
+  
+  if (file.exists(file.path(movielens_private_dir, "movies.parquet"))) {
+    
+    return(paste0("read_parquet('", file.path(movielens_private_dir, paste0(file, ".parquet")), "')"))
+    
+  }
+  
+  ## links.csv writes imdb ids with leading zeros (0114709), which would
+  ## otherwise be read as text. the analysis scripts join on them as numbers.
+  
+  options <- if (file == "links") ", types = {'imdbId': 'INTEGER', 'tmdbId': 'INTEGER'}" else ""
+  
+  paste0("read_csv('data/movielens/ml-25m/", file, ".csv'", options, ")")
+  
+}
+
+
 ### define the movielens tables
 ###
-### movie_lens_tags gets imdbId and tmdbId joined on from links.csv, because
-### the analysis scripts look tags up by imdb id
+### movie_lens_tags gets imdbId and tmdbId joined on from links, because
+### the analysis scripts look tags up by imdb id. the ratings file isn't
+### loaded, since no script uses it.
 
 movielens_tables <- list(
-
-  movie_lens_titles = "SELECT * FROM read_csv('data/movielens/ml-25m/movies.csv')",
-
-  movie_lens_links = "SELECT * FROM read_csv('data/movielens/ml-25m/links.csv')",
-
-  movie_lens_tags = "SELECT tags.*, links.imdbId, links.tmdbId
-                     FROM read_csv('data/movielens/ml-25m/tags.csv') AS tags
-                     LEFT JOIN read_csv('data/movielens/ml-25m/links.csv') AS links
-                     USING (movieId)",
-
-  movie_lens_ratings = "SELECT * FROM read_csv('data/movielens/ml-25m/ratings.csv')",
-
-  movie_lens_genome_tags = "SELECT * FROM read_csv('data/movielens/ml-25m/genome-tags.csv')",
-
-  movie_lens_genome_scores = "SELECT * FROM read_csv('data/movielens/ml-25m/genome-scores.csv')"
-
+  
+  movie_lens_titles = function() paste("SELECT * FROM", movielens_source("movies")),
+  
+  movie_lens_links = function() paste("SELECT * FROM", movielens_source("links")),
+  
+  movie_lens_tags = function() paste("SELECT tags.*, links.imdbId, links.tmdbId FROM",
+                                     movielens_source("tags"), "AS tags LEFT JOIN",
+                                     movielens_source("links"), "AS links USING (movieId)"),
+  
+  movie_lens_genome_tags = function() paste("SELECT * FROM", movielens_source("genome-tags")),
+  
+  movie_lens_genome_scores = function() paste("SELECT * FROM", movielens_source("genome-scores"))
+  
 )
 
 
@@ -137,35 +163,39 @@ load_imdb <- function(movies_db) {
 }
 
 
-### define function to download movielens and load any missing tables
+### define function to get movielens and load any missing tables
 
 load_movielens <- function(movies_db) {
-
+  
   missing <- setdiff(names(movielens_tables), dbListTables(movies_db))
-
+  
   if (length(missing) == 0) return(invisible())
-
-  dir.create("data/movielens", recursive = TRUE, showWarnings = FALSE)
-
-  if (!file.exists("data/movielens/ml-25m/movies.csv")) {
-
+  
+  if (file.exists(file.path(movielens_private_dir, "movies.parquet"))) {
+    
+    message("using movielens from ", movielens_private_dir)
+    
+  } else if (!file.exists("data/movielens/ml-25m/movies.csv")) {
+    
     message("downloading movielens ml-25m")
-
+    
+    dir.create("data/movielens", recursive = TRUE, showWarnings = FALSE)
+    
     download.file("https://files.grouplens.org/datasets/movielens/ml-25m.zip",
                   destfile = "data/movielens/ml-25m.zip", mode = "wb")
-
+    
     unzip("data/movielens/ml-25m.zip", exdir = "data/movielens")
-
+    
   }
-
+  
   for (table in missing) {
-
+    
     message("loading ", table)
-
-    dbExecute(movies_db, paste0("CREATE TABLE ", table, " AS ", movielens_tables[[table]]))
-
+    
+    dbExecute(movies_db, paste0("CREATE TABLE ", table, " AS ", movielens_tables[[table]]()))
+    
   }
-
+  
 }
 
 

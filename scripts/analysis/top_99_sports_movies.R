@@ -2,6 +2,7 @@
 
 library(tidyverse)
 library(scales)
+library(ggthemes)
 
 
 ### fetch and format data from local database
