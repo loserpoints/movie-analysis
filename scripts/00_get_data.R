@@ -75,18 +75,27 @@ imdb_tables <- list(
 
 ### define where the movielens files come from
 ###
-### if loserpoints/private-data is cloned next to this repo, its copy of
-### movielens is used: the same files, converted to parquet. set
-### MOVIELENS_DIR to point somewhere else. otherwise the files are downloaded
+### two releases are used: 32m for movies, links and user tags (up to
+### october 2023), and 25m for the tag genome, which no later release has
+### for newer movies. if loserpoints/private-data is cloned next to this
+### repo, its copy of both is used, already converted to parquet. set
+### MOVIELENS_DIR to point somewhere else. otherwise the zips are downloaded
 ### from grouplens into data/movielens.
 
-movielens_private_dir <- Sys.getenv("MOVIELENS_DIR", "../private-data/movielens/ml-25m")
+movielens_private_dir <- Sys.getenv("MOVIELENS_DIR", "../private-data/movielens")
 
-movielens_source <- function(file) {
+movielens_private <- function() {
   
-  if (file.exists(file.path(movielens_private_dir, "movies.parquet"))) {
+  file.exists(file.path(movielens_private_dir, "ml-25m", "genome-scores.parquet")) &&
+    file.exists(file.path(movielens_private_dir, "ml-32m", "tags.parquet"))
+  
+}
+
+movielens_source <- function(release, file) {
+  
+  if (movielens_private()) {
     
-    return(paste0("read_parquet('", file.path(movielens_private_dir, paste0(file, ".parquet")), "')"))
+    return(paste0("read_parquet('", file.path(movielens_private_dir, release, paste0(file, ".parquet")), "')"))
     
   }
   
@@ -95,7 +104,7 @@ movielens_source <- function(file) {
   
   options <- if (file == "links") ", types = {'imdbId': 'INTEGER', 'tmdbId': 'INTEGER'}" else ""
   
-  paste0("read_csv('data/movielens/ml-25m/", file, ".csv'", options, ")")
+  paste0("read_csv('data/movielens/", release, "/", file, ".csv'", options, ")")
   
 }
 
@@ -103,22 +112,23 @@ movielens_source <- function(file) {
 ### define the movielens tables
 ###
 ### movie_lens_tags gets imdbId and tmdbId joined on from links, because
-### the analysis scripts look tags up by imdb id. the ratings file isn't
-### loaded, since no script uses it.
+### the analysis scripts look tags up by imdb id. movie ids are the same in
+### both releases, so the genome joins to 32m's links. the ratings files
+### aren't loaded, since no script uses them.
 
 movielens_tables <- list(
   
-  movie_lens_titles = function() paste("SELECT * FROM", movielens_source("movies")),
+  movie_lens_titles = function() paste("SELECT * FROM", movielens_source("ml-32m", "movies")),
   
-  movie_lens_links = function() paste("SELECT * FROM", movielens_source("links")),
+  movie_lens_links = function() paste("SELECT * FROM", movielens_source("ml-32m", "links")),
   
   movie_lens_tags = function() paste("SELECT tags.*, links.imdbId, links.tmdbId FROM",
-                                     movielens_source("tags"), "AS tags LEFT JOIN",
-                                     movielens_source("links"), "AS links USING (movieId)"),
+                                     movielens_source("ml-32m", "tags"), "AS tags LEFT JOIN",
+                                     movielens_source("ml-32m", "links"), "AS links USING (movieId)"),
   
-  movie_lens_genome_tags = function() paste("SELECT * FROM", movielens_source("genome-tags")),
+  movie_lens_genome_tags = function() paste("SELECT * FROM", movielens_source("ml-25m", "genome-tags")),
   
-  movie_lens_genome_scores = function() paste("SELECT * FROM", movielens_source("genome-scores"))
+  movie_lens_genome_scores = function() paste("SELECT * FROM", movielens_source("ml-25m", "genome-scores"))
   
 )
 
@@ -171,20 +181,28 @@ load_movielens <- function(movies_db) {
   
   if (length(missing) == 0) return(invisible())
   
-  if (file.exists(file.path(movielens_private_dir, "movies.parquet"))) {
+  if (movielens_private()) {
     
     message("using movielens from ", movielens_private_dir)
     
-  } else if (!file.exists("data/movielens/ml-25m/movies.csv")) {
-    
-    message("downloading movielens ml-25m")
+  } else {
     
     dir.create("data/movielens", recursive = TRUE, showWarnings = FALSE)
     
-    download.file("https://files.grouplens.org/datasets/movielens/ml-25m.zip",
-                  destfile = "data/movielens/ml-25m.zip", mode = "wb")
-    
-    unzip("data/movielens/ml-25m.zip", exdir = "data/movielens")
+    for (release in c("ml-25m", "ml-32m")) {
+      
+      if (file.exists(file.path("data/movielens", release, "movies.csv"))) next
+      
+      message("downloading movielens ", release)
+      
+      zip <- file.path("data/movielens", paste0(release, ".zip"))
+      
+      download.file(paste0("https://files.grouplens.org/datasets/movielens/", release, ".zip"),
+                    destfile = zip, mode = "wb")
+      
+      unzip(zip, exdir = "data/movielens")
+      
+    }
     
   }
   
