@@ -1,17 +1,18 @@
-### note: this ranking doesn't measure the best comedies, and needs reworking
-### with movielens data before it means much.
+### ranks comedies by the same blend of popularity and quality as the horror
+### charts, with two changes for comedy.
 ###
-### it picks comedies by imdb's genre tags, which list every genre a movie
-### touches, in alphabetical order rather than by how prominent each one is.
-### so a drama with some laughs is a comedy as much as airplane! is, and
-### dramas rate higher on imdb: 55 of the top 99 are also tagged drama (the
-### intouchables, life is beautiful, green book), while airplane! is 84th.
-### dropping everything tagged drama doesn't fix it either, because imdb
-### tags chaplin's comedies as drama too.
+### which movies count: the movielens tag genome scores how relevant
+### "comedy" is to each movie, and a movie counts at 0.8 or more. imdb's
+### genre tags can't do this, because they list every genre a movie touches,
+### in alphabetical order rather than by prominence: a drama with some laughs
+### is as much a comedy as airplane! is, and since dramas rate higher on imdb,
+### they crowded the top. the genome stops in 2019, so nothing later appears.
 ###
-### the fix is to choose comedies by the movielens tag genome instead, which
-### scores how relevant a tag like "funny" or "comedy" is to each movie, the
-### way top_99_sports_movies.R does for sports tags.
+### how funny: a movie loses up to 5% of its score for being less funny, by
+### the genome's "hilarious" relevance (0 to 1). the top of the list is
+### separated by only a few percent, so this reorders it without upending
+### it. the intouchables (0.45) drops from 1st to 14th, while chaplin keeps
+### his place.
 
 
 library(tidyverse)
@@ -30,13 +31,27 @@ if (.Platform$OS.type == "windows") loadfonts(device = "win")
 
 source("scripts/00_get_data.R")
 
-movies_db <- connect_movies_db()
+movies_db <- connect_movies_db(movielens = TRUE)
 
 
 comedy_query <-
 
   "
-  SELECT imdb_basics.*, imdb_titles.averageRating, imdb_titles.numVotes
+  WITH genome AS (
+    SELECT printf('tt%07d', movie_lens_links.imdbId) AS tconst,
+           max(CASE WHEN movie_lens_genome_tags.tag = 'comedy' THEN relevance END) AS comedy,
+           max(CASE WHEN movie_lens_genome_tags.tag = 'hilarious' THEN relevance END) AS hilarious
+    FROM movie_lens_genome_scores
+    INNER JOIN movie_lens_genome_tags
+      ON movie_lens_genome_tags.tagId = movie_lens_genome_scores.tagId
+    INNER JOIN movie_lens_links
+      ON movie_lens_links.movieId = movie_lens_genome_scores.movieId
+    WHERE movie_lens_genome_tags.tag IN ('comedy', 'hilarious')
+    GROUP BY 1
+  )
+
+  SELECT imdb_basics.*, imdb_titles.averageRating, imdb_titles.numVotes,
+         genome.comedy, genome.hilarious
 
   FROM imdb_basics
 
@@ -44,7 +59,11 @@ comedy_query <-
 
 	ON imdb_basics.tconst = imdb_titles.tconst
 
-	WHERE genres LIKE '%Comedy%'
+	INNER JOIN genome
+
+	ON imdb_basics.tconst = genome.tconst
+
+	WHERE genome.comedy >= 0.8
     AND genres NOT LIKE '%Documentary%'
     AND genres NOT LIKE '%Family%'
     AND genres NOT LIKE '%Animation%'
@@ -94,7 +113,7 @@ comedy_adj <- do.call(rbind, df_list) %>%
 
   mutate(rating_rank = row_number(),
          quality = rescale(rating_rank, to = c(0, 5)),
-         adj_score = popularity + quality)
+         adj_score = (popularity + quality) * (0.95 + 0.05 * hilarious))
 
 
 ### rank the top 99 and lay them out in three columns
@@ -136,7 +155,7 @@ ggplot(best_ever, aes(-rank, y = 1, label = label)) +
 
   ylab("") +
 
-  ggtitle("IMDB Top 99 Comedy Movies", subtitle = "movies ranked using a blended score based on popularity and quality") +
+  ggtitle("IMDB Top 99 Comedy Movies", subtitle = "movies ranked using a blended score based on popularity, quality and how funny they are | comedies identified based on movielens tags") +
 
   theme(axis.text = element_blank(),
         axis.ticks = element_blank(),

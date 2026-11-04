@@ -25,8 +25,9 @@ install and no password to set. The first run downloads about 1 GB of IMDb
 files and takes several minutes; after that, scripts reuse the database file
 and start straight away.
 
-MovieLens is only loaded by the two scripts that use it, `top_99_slashers.R`
-and `top_99_sports_movies.R`, which call `connect_movies_db(movielens = TRUE)`.
+MovieLens is only loaded by the three scripts that use it,
+`top_99_slashers.R`, `top_99_sports_movies.R` and `top_99_comedy.R`, which call
+`connect_movies_db(movielens = TRUE)`.
 If the private `loserpoints/private-data` repo is cloned next to this one, its
 copy of both releases is used, already converted to Parquet; set
 `MOVIELENS_DIR` to point at another copy of its `movielens` folder. Otherwise
@@ -61,7 +62,7 @@ The analyses live in `scripts/analysis/`:
 | `horror_ratings_scatter.R` | How a single year's horror releases spread across popularity and rating |
 | `horror_franchises.R` | How franchises hold up across sequels |
 | `top_99_sports_movies.R` | The same treatment applied to sports movies |
-| `top_99_comedy.R` | The same treatment applied to comedies |
+| `top_99_comedy.R` | The same treatment applied to comedies, picked and nudged by how funny MovieLens tags say they are |
 | `tv_series_ratings.R` | Episode ratings across the run of a series |
 
 `horror_franchises.R`, `top_99_sports_movies.R`, `top_99_comedy.R` and
