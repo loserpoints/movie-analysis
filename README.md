@@ -12,8 +12,10 @@ Two public sources, downloaded the first time a script needs them:
 
 - **IMDb datasets** (`datasets.imdbws.com`) — titles, ratings, crew, episodes
   and names, published by IMDb as gzipped TSVs and refreshed daily.
-- **MovieLens** (GroupLens Research) — ratings, tags, links and the tag genome,
-  from the `ml-25m` release.
+- **MovieLens** (GroupLens Research) — user tags and links from the `ml-32m`
+  release (up to October 2023), and the tag genome from `ml-25m`, the last
+  release to include it (up to 2019). The 25M licence doesn't allow
+  redistributing it, so MovieLens isn't kept in this repo.
 
 `scripts/00_get_data.R` handles both. Every script sources it and calls
 `connect_movies_db()`, which downloads whatever is missing into `data/`, loads
@@ -23,9 +25,12 @@ install and no password to set. The first run downloads about 1 GB of IMDb
 files and takes several minutes; after that, scripts reuse the database file
 and start straight away.
 
-MovieLens (another 250 MB or so) is only fetched by the two scripts that use
-it, `top_99_slashers.R` and `top_99_sports_movies.R`, which call
-`connect_movies_db(movielens = TRUE)`.
+MovieLens is only loaded by the two scripts that use it, `top_99_slashers.R`
+and `top_99_sports_movies.R`, which call `connect_movies_db(movielens = TRUE)`.
+If the private `loserpoints/private-data` repo is cloned next to this one, its
+copy of both releases is used, already converted to Parquet; set
+`MOVIELENS_DIR` to point at another copy of its `movielens` folder. Otherwise
+both zips (about 500 MB together) are downloaded from GroupLens.
 
 To refresh the data, delete `data/` and run any script. It is gitignored.
 
