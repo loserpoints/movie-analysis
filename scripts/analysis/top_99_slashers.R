@@ -17,33 +17,51 @@ source("scripts/00_get_data.R")
 movies_db <- connect_movies_db(movielens = TRUE)
 
 
-slasher_tags_query <- 
+### find the slashers
+###
+### a movie counts as a slasher if the movielens tag genome gives it a
+### "slasher" relevance of 0.5 or more. that keeps out movies only one or
+### two people tagged as slashers, like the silence of the lambs (0.09).
+### the genome stops in 2019, so a movie it doesn't score counts if at
+### least two people tagged it slasher, which brings in newer ones like x.
+
+slasher_query <- 
   
   "
-  SELECT imdbId, tag FROM movie_lens_tags 
-	
-	WHERE tag ILIKE '%slasher%'
-	
+  WITH genome_movies AS (
+    SELECT DISTINCT movieId FROM movie_lens_genome_scores
+  ),
+  
+  by_genome AS (
+    SELECT movie_lens_genome_scores.movieId
+    FROM movie_lens_genome_scores
+    INNER JOIN movie_lens_genome_tags
+      ON movie_lens_genome_tags.tagId = movie_lens_genome_scores.tagId
+    WHERE movie_lens_genome_tags.tag = 'slasher'
+      AND movie_lens_genome_scores.relevance >= 0.5
+  ),
+  
+  by_tags AS (
+    SELECT movieId
+    FROM movie_lens_tags
+    WHERE tag ILIKE '%slasher%'
+      AND movieId NOT IN (SELECT movieId FROM genome_movies)
+    GROUP BY movieId
+    HAVING count(DISTINCT userId) >= 2
+  )
+  
+  SELECT DISTINCT movie_lens_links.imdbId
+  FROM movie_lens_links
+  WHERE movieId IN (SELECT movieId FROM by_genome UNION SELECT movieId FROM by_tags)
+  
     "
 
-slasher_tags_db <- dbSendQuery(movies_db, slasher_tags_query)
-
-slasher_tags <- dbFetch(slasher_tags_db)
-
-slasher_tags <- slasher_tags %>%
-  
-  group_by(imdbId, tag) %>%
-  
-  add_tally() %>%
-  
-  ungroup() %>%
-  
-  select(imdbId) %>%
-  
-  unique() %>%
+slasher_tags <- dbGetQuery(movies_db, slasher_query) %>%
   
   mutate(tconst = sprintf("tt%07d", imdbId),
          slasher = "y")
+
+dbDisconnect(movies_db, shutdown = TRUE)
 
 
 ### join slasher list with imdb horror films and then filter for only slashers
