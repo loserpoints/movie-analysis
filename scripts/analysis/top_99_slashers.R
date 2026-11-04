@@ -20,10 +20,10 @@ movies_db <- connect_movies_db(movielens = TRUE)
 ### find the slashers
 ###
 ### a movie counts as a slasher if the movielens tag genome gives it a
-### "slasher" relevance of 0.75 or more. that keeps out movies only one or
+### "slasher" relevance of 0.7 or more. that keeps out movies only one or
 ### two people tagged as slashers, like the silence of the lambs (0.09),
-### and gory horror the genome sees as close to slasher, like saw (0.72)
-### and hellraiser (0.69).
+### and gory horror the genome sees as close to slasher, like hellraiser
+### (0.69). saw (0.72) gets in, as all its sequels do.
 ### the genome stops in 2019, so a movie it doesn't score counts if at
 ### least two people tagged it slasher, which brings in newer ones like x.
 
@@ -40,7 +40,7 @@ slasher_query <-
     INNER JOIN movie_lens_genome_tags
       ON movie_lens_genome_tags.tagId = movie_lens_genome_scores.tagId
     WHERE movie_lens_genome_tags.tag = 'slasher'
-      AND movie_lens_genome_scores.relevance >= 0.75
+      AND movie_lens_genome_scores.relevance >= 0.7
   ),
   
   by_tags AS (
